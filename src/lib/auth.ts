@@ -41,6 +41,16 @@ export const auth = betterAuth({
     },
   },
   user: {
+    changeEmail: {
+      enabled: true,
+      async sendChangeEmailConfirmation({ user, url, newEmail }) {
+        await sendEmail({
+          to: user.email,
+          subject: "Confirm your email change",
+          html: `<p>Click <a href="${url}">here</a> to confirm your email change to ${newEmail}</p>`,
+        });
+      },
+    },
     additionalFields: {
       role: {
         type: "string",

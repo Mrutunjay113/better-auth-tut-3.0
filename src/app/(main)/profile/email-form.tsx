@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,7 +39,17 @@ export function EmailForm({ currentEmail }: EmailFormProps) {
   });
 
   async function onSubmit(values: UpdateEmailValues) {
-    // TODO: Handle email update
+    setStatus(null);
+    setError(null);
+    const { error } = await authClient.changeEmail({
+      newEmail: values.newEmail,
+      callbackURL: "/email-verified",
+    });
+    if (error) {
+      setError(error.message ?? "An error occurred");
+      return;
+    }
+    setStatus("Verification email sent to your current email address");
   }
 
   const loading = form.formState.isSubmitting;

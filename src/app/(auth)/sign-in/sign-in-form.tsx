@@ -48,6 +48,8 @@ export function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const redirect = searchParams.get("redirect");
+
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -61,19 +63,18 @@ export function SignInForm() {
     // TODO: Handle sign in
     setError(null);
     setLoading(true);
-    const {data,error} = await authClient.signIn.email({
+    const { data, error } = await authClient.signIn.email({
       email,
       password,
       rememberMe,
-    })
+    });
     setLoading(false);
-    if(error){
+    if (error) {
       setError(error.message ?? "An error occurred");
       return;
-    }
-    else{
+    } else {
       toast.success("Signed in successfully");
-      router.push("/dashboard");
+      router.push(redirect ?? "/dashboard");
     }
   }
 
@@ -81,16 +82,15 @@ export function SignInForm() {
     setLoading(true);
     setError(null);
 
-    const {error,} = await authClient.signIn.social({
+    const { error } = await authClient.signIn.social({
       provider,
-      callbackURL:"/dashboard"
-    })
+      callbackURL: redirect ?? "/dashboard",
+    });
     setLoading(false);
-    if(error){
+    if (error) {
       setError(error.message ?? "An error occurred");
       return;
     }
-   
   }
 
   return (
